@@ -1,0 +1,74 @@
+function doGet(e) { 
+  var sheet_id = '1rppe60TZfwSgCeQla38SDRoDD3nEcSRvEXrm50iWuPs';     // paste your Spreadsheet ID here
+  var sheet = SpreadsheetApp.openById(sheet_id).getSheetByName('SheetT'); //create new sheet use name SheetT   
+  // get Active sheetsheet_id.getSheetByName('SheetT');
+  Logger.log( JSON.stringify(e) );  // view parameters
+  var result = 'Ok'; // assume success
+  if (e.parameter == 'undefined') {
+    result = 'No Parameters';
+  }
+  else if (e.parameter.clearData === 'true') { // added parameter to clear data
+    
+    sheet.getDataRange().clear(); // clear all data in the sheet
+    result = 'All data cleared';
+  }
+  //getRange(row, column, optNumRows, optNumColumns)
+  else if(e.parameter.read !== undefined){
+    return ContentService.createTextOutput(sheet1.getRange(2,1,1,3).getValue());
+  }
+  else {
+    //var newRow = sheet.getLastRow() + 1; 
+    var newRow = 2;          
+    var rowData = [];
+    d=new Date();
+    rowData[0] = d; // Timestamp in column A
+    rowData[1] = d.toLocaleTimeString(); // Timestamp in column A
+
+    //has active 6 columns
+    for (var param in e.parameter) {
+      Logger.log('In for loop, param=' + param);
+      var value = stripQuotes(e.parameter[param]);
+      Logger.log(param + ':' + e.parameter[param]);
+      switch (param) {
+        case 'value1': //Parameter 1, It has to be updated in Column in Sheets in the code, orderwise
+          rowData[2] = value; //Value in column C
+          result = 'Written on column C';
+          break;
+        case 'value2': //Parameter 2, It has to be updated in Column in Sheets in the code, orderwise
+          rowData[3] = value; //Value in column D
+          result += ' Written on column D';
+          break;
+        case 'value3': //Parameter 3, It has to be updated in Column in Sheets in the code, orderwise
+          rowData[4] = value; //Value in column Ea
+          result += ' Written on column E';
+          break;
+        
+        case 'value4': //Parameter 4, It has to be updated in Column in Sheets in the code, orderwise
+          rowData[5] = value; //Value in column F
+          result += ' Written on column F';
+          break;
+        case 'value5': //Parameter 5, It has to be updated in Column in Sheets in the code, orderwise
+          rowData[6] = value; //Value in column G
+          result += ' Written on column G';
+          break;    
+        case 'value6': //Parameter 5, It has to be updated in Column in Sheets in the code, orderwise
+          rowData[7] = value; //Value in column G
+          result += ' Written on column H';
+          break;  
+        default:
+          result = "unsupported parameter";
+      }
+    }
+    Logger.log(JSON.stringify(rowData));
+    // Write new row below
+    sheet.insertRowBefore(2); //insert row 2
+    var newRange = sheet.getRange(newRow, 1, 1, rowData.length);//set range row#2
+    newRange.setValues([rowData]);//set values at row#2
+  }
+  // Return result of operation
+  return ContentService.createTextOutput(result);
+}
+
+function stripQuotes( value ) {
+  return value.replace(/^["']|['"]$/g, "");
+}
